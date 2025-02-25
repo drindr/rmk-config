@@ -1,0 +1,366 @@
+# Documentation: https://haobogu.github.io/rmk/keyboard_configuration.html
+[keyboard]
+name = "awe-kbd"
+product_name = "awe-kbd"
+vendor_id = 0x4c4b
+product_id = 0x4643
+manufacturer = "drin"
+chip = "nrf52840"
+dependency.defmt_log = true
+
+[layout]
+# WARNING: Currently row2col/col2row is set in RMK's feature gate, configs here do nothing actually
+# row2col = true
+rows = 8
+cols = 5
+layers = 4
+keymap = [
+    [
+        [
+            "Q",
+            "W",
+            "E",
+            "R",
+            "T",
+        ],
+        [
+            "A",
+            "S",
+            "D",
+            "F",
+            "G",
+        ],
+        [
+            "Z",
+            "X",
+            "C",
+            "V",
+            "B",
+        ],
+        [
+            "_",
+            "_",
+            "Escape",
+            "TT(1)",
+            "Enter",
+        ],
+        [
+            "Y",
+            "U",
+            "I",
+            "O",
+            "P",
+        ],
+        [
+            "H",
+            "J",
+            "K",
+            "L",
+            "Semicolon",
+        ],
+        [
+            "N",
+            "M",
+            "Comma",
+            "Dot",
+            "Enter",
+        ],
+        [
+            "Space",
+            "Backspace",
+            "TT(2)",
+            "_",
+            "_",
+        ],
+    ],
+    [
+        [
+            "KbMute",
+            "WM(Kc1, LShift)",
+            "WM(Kc2, LShift)",
+            "WM(Kc3, LShift)",
+            "_",
+        ],
+        [
+            "KbVolumeUp",
+            "WM(Kc4, LShift)",
+            "WM(Kc5, LShift)",
+            "WM(Kc6, LShift)",
+            "_",
+        ],
+        [
+            "KbVolumeDown",
+            "WM(Kc7, LShift)",
+            "WM(Kc8, LShift)",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "Escape",
+            "_",
+            "Enter",
+        ],
+        [
+            "_",
+            "BrightnessDown",
+            "BrightnessUp",
+            "_",
+            "_",
+        ],
+        [
+            "Left",
+            "Down",
+            "UP",
+            "Right",
+            "WM(Quote, LShift)",
+        ],
+        [
+            "_",
+            "Semicolon",
+            "WM(Semicolon, LShift)",
+            "_",
+            "Quote",
+        ],
+        [
+            "Space",
+            "Backspace",
+            "TT(2)",
+            "_",
+            "_",
+        ],
+    ],
+    [
+        [
+            "WM(Kc9, LShift)",
+            "Kc1",
+            "Kc2",
+            "Kc3",
+            "WM(Kc0, LShift)",
+        ],
+        [
+            "LeftBracket",
+            "Kc4",
+            "Kc5",
+            "Kc6",
+            "RightBracket",
+        ],
+        [
+            "WM(LeftBracket, LShift)",
+            "Kc7",
+            "Kc8",
+            "Kc9",
+            "WM(RightBracket, LShift)",
+        ],
+        [
+            "_",
+            "_",
+            "Escape",
+            "TT(1)",
+            "Enter",
+        ],
+        [
+            "F1",
+            "F2",
+            "F5",
+            "F11",
+            "F12",
+        ],
+        [
+            "Kc0",
+            "Slash",
+            "Backslash",
+            "_",
+            "Enter",
+        ],
+        [
+            "_",
+            "Minus",
+            "WM(Equal, LShift)",
+            "WM(Minus, LShift)",
+            "Equal",
+        ],
+        [
+            "Space",
+            "Backspace",
+            "_",
+            "_",
+            "_",
+        ],
+    ],
+    [
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "OutputUsb",
+            "OutputBluetooth",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+        [
+            "_",
+            "_",
+            "_",
+            "_",
+            "_",
+        ],
+    ],
+]
+
+[behavior.tri_layer]
+upper = 1
+lower = 2
+adjust = 3
+
+[behavior.tap_hold]
+enable_hrm = true
+prior_idle_time = "120ms"
+hold_timeout = "200ms"
+post_wait_time = "50ms"
+
+[light]
+# All light pins are high-active by default, uncomment if you want it to be low-active
+# capslock.pin = "PB2"
+# capslock.low_active = true
+# scrolllock.pin = "PA3"
+# scrolllock.low_active = true
+# Just ignore if no light pin is used for it
+# numslock.pin = "PA5"
+# numslock.low_active = true
+
+[storage]
+# Storage feature is enabled by default
+# enabled = true
+# start_addr = 0x00000000
+# num_sectors = 2
+# clear_storage = true
+# !!! Warning: RMK uses last 2 sectors of your microcontroller's flash by default. You have to ensure that those flash space is not used.
+# If you're using a bootloader which puts itself at the end of the flast, like Adafruit_nRF52_Bootloader, RMK will break the bootloader.
+# Setting the `start_addr` manually to avoid this. See: https://haobogu.github.io/rmk/storage.html
+
+[ble]
+enabled = true
+battery_adc_pin = "vddh"
+
+[split]
+connection = "ble"
+
+[split.central]
+rows = 4
+cols = 5
+row_offset = 0
+col_offset = 0
+ble_addr = [0x18, 0xe2, 0x21, 0x80, 0xc0, 0xc7]
+
+# [[split.central.joystick]]
+# instance = "main_joystick"
+# axis = ["P0_31", "P0_29"]
+#transform = [[1, 1], [1, 1]]
+
+[[split.central.bus]]
+protocol = "SPI"
+config.instance = "display"
+config.sck = "P0_21"
+config.mosi = "P0_23"
+
+[split.central.display]
+bus = "display"
+interface.protocol = "SPI"
+interface.config = "P0_19"
+
+[split.central.matrix]
+matrix_type = "direct_pin"
+direct_pins = [
+    [
+        "P0_22",
+        "P0_17",
+        "P0_08",
+        "P0_24",
+        "P0_20",
+    ],
+    [
+        "P1_13",
+        "P1_15",
+        "P0_02",
+        "P1_00",
+        "P0_10",
+    ],
+    [
+        "P1_08",
+        "P1_02",
+        "P0_12",
+        "P0_07",
+        "P1_11",
+    ],
+    [
+        "_",
+        "_",
+        "P0_11",
+        "P0_09",
+        "P1_06",
+    ],
+]
+
+
+[[split.peripheral]]
+rows = 4
+cols = 5
+row_offset = 4
+col_offset = 0
+ble_addr = [0x7e, 0xfe, 0x73, 0x9e, 0x66, 0xe3]
+
+[split.peripheral.matrix]
+matrix_type = "direct_pin"
+direct_pins = [
+    ["P0_20", "P1_15", "P0_08", "P0_17", "P0_22"],
+    ["P1_04", "P1_13", "P0_02", "P0_24", "P1_00"],
+    # ["P1_11", "P0_07", "P0_12", "P1_02", "P0_11"],
+    # ["P0_09", "P1_06", "P1_08", "_"    , "_"    ]
+
+    # ["P1_08", "P0_07", "P0_12", "P1_02", "P1_11"],
+    # ["P0_09", "P1_06", "P0_11", "_"    , "_"    ],
+    ["P0_11", "P0_07", "P0_12", "P1_02", "P1_08"],
+    ["P0_09", "P1_06", "P1_11", "_", "_"],
+]
