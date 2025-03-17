@@ -21,14 +21,19 @@ use embassy_nrf::{
 use panic_probe as _;
 use rmk::{
     ble::SOFTWARE_VBUS,
-    channel::{BATTERY_CHANNEL, EVENT_CHANNEL},
+    channel::EVENT_CHANNEL,
     config::{
         BleBatteryConfig, ControllerConfig, KeyboardUsbConfig, RmkConfig, StorageConfig, VialConfig,
     },
     debounce::default_debouncer::DefaultDebouncer,
     futures::future::{join, join4},
     initialize_keymap_and_storage, initialize_nrf_sd_and_flash,
-    input_device::{adc::NrfAdc, battery::BatteryProcessor, joystick::JoystickProcessor, Runnable},
+    input_device::{
+        adc::{EventType, NrfAdc},
+        battery::BatteryProcessor,
+        joystick::JoystickProcessor,
+        Runnable,
+    },
     keyboard::Keyboard,
     light::LightController,
     run_devices, run_processor_chain, run_rmk,
@@ -105,7 +110,7 @@ async fn main(spawner: Spawner) {
                 [P1_13, P1_15, P0_02, P1_00, P0_10],
                 [P1_08, P1_02, P0_12, P0_07, P1_11],
                 [_, _, P0_11, P0_09, P1_06],
-        ]
+            ]
     };
 
     // Initialize the Softdevice and flash
@@ -129,8 +134,11 @@ async fn main(spawner: Spawner) {
 
     // Initialize the matrix + keyboard
     let debouncer = DefaultDebouncer::<5, 4>::new();
-    let mut matrix =
-        CentralDirectPinMatrix::<_, _, 0, 0, 4, 5, 6>::new(direct_pins, debouncer, true);
+    let mut matrix = CentralDirectPinMatrix::<_, _, 0, 0, 4, 5, { keymap::SIZE }>::new(
+        direct_pins,
+        debouncer,
+        true,
+    );
     let mut keyboard = Keyboard::new(&keymap, rmk_config.behavior_config.clone());
 
     // Initialize the light controller
@@ -142,10 +150,9 @@ async fn main(spawner: Spawner) {
         p.SAADC,
     );
     saadc.calibrate().await;
-    let mut adc_dev = NrfAdc::new(saadc, 20);
-    let mut batt_proc = BatteryProcessor::new(0, 1, 5, &keymap);
-    let mut joy_proc =
-        JoystickProcessor::new([1, 2], [[40, 0], [0, 40]], [30930, 31087], 8, &keymap);
+    let mut adc_dev = NrfAdc::new(saadc, [EventType::Battery, EventType::Joystick(2)], 20);
+    let mut batt_proc = BatteryProcessor::new(1, 5, &keymap);
+    let mut joy_proc = JoystickProcessor::new([[80, 0], [0, 80]], [29130, 29365], 6, &keymap);
 
     // Start
     join4(
@@ -157,7 +164,7 @@ async fn main(spawner: Spawner) {
         },
         keyboard.run(),
         join(
-            run_peripheral_manager::<4, 7, 4, 0>(0, peripheral_addr),
+            run_peripheral_manager::<4, 5, 4, 0>(0, peripheral_addr),
             run_rmk(&keymap, driver, storage, light_controller, rmk_config, sd),
         ),
     )
