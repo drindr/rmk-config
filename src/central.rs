@@ -21,14 +21,14 @@ use embassy_nrf::{
 use panic_probe as _;
 use rmk::{
     ble::SOFTWARE_VBUS,
-    channel::EVENT_CHANNEL,
+    channel::{BATTERY_CHANNEL, EVENT_CHANNEL},
     config::{
         BleBatteryConfig, ControllerConfig, KeyboardUsbConfig, RmkConfig, StorageConfig, VialConfig,
     },
     debounce::default_debouncer::DefaultDebouncer,
     futures::future::{join, join4},
     initialize_keymap_and_storage, initialize_nrf_sd_and_flash,
-    input_device::{adc::NrfAdc, joystick::JoystickProcessor, Runnable},
+    input_device::{adc::NrfAdc, battery::BatteryProcessor, joystick::JoystickProcessor, Runnable},
     keyboard::Keyboard,
     light::LightController,
     run_devices, run_processor_chain, run_rmk,
@@ -83,7 +83,7 @@ async fn main(spawner: Spawner) {
         serial_number: "vial:f64c2b3c:000001",
     };
     let vial_config = VialConfig::new(VIAL_KEYBOARD_ID, VIAL_KEYBOARD_DEF);
-    let ble_battery_config = BleBatteryConfig::new(None, true, None, false, None, 2000, 2806);
+    let ble_battery_config = BleBatteryConfig::new(None, true, None, false);
     let storage_config = StorageConfig {
         start_addr: 0,
         num_sectors: 6,
@@ -137,11 +137,15 @@ async fn main(spawner: Spawner) {
     let light_controller: LightController<Output> =
         LightController::new(ControllerConfig::default().light_config);
 
-    let saadc = init_adc([p.P0_31.into(), p.P0_29.into()], p.SAADC);
+    let saadc = init_adc(
+        [saadc::VddhDiv5Input.into(), p.P0_31.into(), p.P0_29.into()],
+        p.SAADC,
+    );
     saadc.calibrate().await;
     let mut adc_dev = NrfAdc::new(saadc, 20);
+    let mut batt_proc = BatteryProcessor::new(0, 1, 5, &keymap);
     let mut joy_proc =
-        JoystickProcessor::new([0, 1], [[40, 0], [0, 40]], [30930, 31087], 8, &keymap);
+        JoystickProcessor::new([1, 2], [[40, 0], [0, 40]], [30930, 31087], 8, &keymap);
 
     // Start
     join4(
@@ -149,7 +153,7 @@ async fn main(spawner: Spawner) {
             (matrix, adc_dev) => EVENT_CHANNEL,
         ),
         run_processor_chain! {
-            EVENT_CHANNEL => [joy_proc],
+            EVENT_CHANNEL => [joy_proc, batt_proc],
         },
         keyboard.run(),
         join(
