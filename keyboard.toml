@@ -24,8 +24,8 @@ keymap = [
             "T",
         ],
         [
-            "A",
-            "S",
+            "Bootloader",
+            "Reboot",
             "D",
             "F",
             "G",
@@ -254,11 +254,11 @@ upper = 1
 lower = 2
 adjust = 3
 
-[behavior.tap_hold]
-enable_hrm = true
-prior_idle_time = "120ms"
-hold_timeout = "200ms"
-post_wait_time = "50ms"
+# [behavior.tap_hold]
+# enable_hrm = true
+# prior_idle_time = "120ms"
+# hold_timeout = "200ms"
+# post_wait_time = "50ms"
 
 [light]
 # All light pins are high-active by default, uncomment if you want it to be low-active
@@ -275,7 +275,7 @@ post_wait_time = "50ms"
 # enabled = true
 # start_addr = 0x00000000
 # num_sectors = 2
-# clear_storage = true
+clear_storage = true
 # !!! Warning: RMK uses last 2 sectors of your microcontroller's flash by default. You have to ensure that those flash space is not used.
 # If you're using a bootloader which puts itself at the end of the flast, like Adafruit_nRF52_Bootloader, RMK will break the bootloader.
 # Setting the `start_addr` manually to avoid this. See: https://haobogu.github.io/rmk/storage.html
@@ -294,21 +294,30 @@ row_offset = 0
 col_offset = 0
 ble_addr = [0x18, 0xe2, 0x21, 0x80, 0xc0, 0xc7]
 
+[[split.central.input_device.joystick]]
+name = "default"
+pin_x = "P0_31"
+pin_y = "P0_29"
+pin_z = "_"
+transform = [[80, 0], [0, 80]]
+bias = [29130, 29365]
+resolution = 6
+
 # [[split.central.joystick]]
 # instance = "main_joystick"
 # axis = ["P0_31", "P0_29"]
 #transform = [[1, 1], [1, 1]]
 
-[[split.central.bus]]
-protocol = "SPI"
-config.instance = "display"
-config.sck = "P0_21"
-config.mosi = "P0_23"
+# [[split.central.bus]]
+# protocol = "SPI"
+# config.instance = "display"
+# config.sck = "P0_21"
+# config.mosi = "P0_23"
 
-[split.central.display]
-bus = "display"
-interface.protocol = "SPI"
-interface.config = "P0_19"
+# [split.central.display]
+# bus = "display"
+# interface.protocol = "SPI"
+# interface.config = "P0_19"
 
 [split.central.matrix]
 matrix_type = "direct_pin"

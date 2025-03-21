@@ -14,7 +14,8 @@ rmk = { path = "../../../rmk/rmk", version = "0.5.1", features = [
     "nrf52840_ble",
     "async_matrix",
     "split",
-    "display",
+    "adafruit_bl"
+    #"display",
     # "joystick",
     # "log",
 ] }
