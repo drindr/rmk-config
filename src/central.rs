@@ -29,7 +29,7 @@ use rmk::{
     futures::future::{join, join4},
     initialize_keymap_and_storage, initialize_nrf_sd_and_flash,
     input_device::{
-        adc::{EventType, NrfAdc},
+        adc::{AnalogEventType, NrfAdc},
         battery::BatteryProcessor,
         joystick::JoystickProcessor,
         Runnable,
@@ -150,7 +150,12 @@ async fn main(spawner: Spawner) {
         p.SAADC,
     );
     saadc.calibrate().await;
-    let mut adc_dev = NrfAdc::new(saadc, [EventType::Battery, EventType::Joystick(2)], 20);
+    let mut adc_dev = NrfAdc::new(
+        saadc,
+        [AnalogEventType::Battery, AnalogEventType::Joystick(2)],
+        20,
+        Some(300),
+    );
     let mut batt_proc = BatteryProcessor::new(1, 5, &keymap);
     let mut joy_proc = JoystickProcessor::new([[80, 0], [0, 80]], [29130, 29365], 6, &keymap);
 
